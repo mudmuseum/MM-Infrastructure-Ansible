@@ -1,0 +1,34 @@
+---
+- name: "Update all packages to latest version"
+  yum:
+    name: "*"
+    state: latest
+
+- name: "Install specific package set for MUD development"
+  yum:
+    name:
+      - jq
+      - telnet
+      - gdb
+      - git
+      - gcc
+    state: latest
+
+- name: "[shell] Enable amazon-linux-extras packages"
+  shell: amazon-linux-extras enable docker
+
+- name: "Install docker via package manager"
+  yum:
+    name: docker
+    state: latest
+
+- name: "[shell] Configure docker startup"
+  shell: systemctl enable docker
+
+- name: "[shell] Configure user-group docker management"
+  shell: usermod -aG docker ec2-user
+
+- name: "Start docker service if not started"
+  service:
+    name: docker
+    state: started

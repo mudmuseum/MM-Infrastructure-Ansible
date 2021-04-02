@@ -1,0 +1,2 @@
+[aws_ec2]
+mud.mudmuseum.com ansible_user=ec2-user

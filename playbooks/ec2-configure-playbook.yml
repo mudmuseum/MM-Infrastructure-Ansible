@@ -1,0 +1,7 @@
+---
+- hosts: all
+  gather_facts: true
+  become: yes
+
+  roles:
+    - { role: ec2-configure, when: ansible_os_family != 'CentOS' }
