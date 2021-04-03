@@ -12,6 +12,7 @@
       - gdb
       - git
       - gcc
+      - zlib-devel
     state: latest
 
 - name: "[shell] Enable amazon-linux-extras packages"
