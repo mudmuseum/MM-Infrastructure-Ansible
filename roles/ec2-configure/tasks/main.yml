@@ -32,3 +32,19 @@
   service:
     name: docker
     state: started
+
+- name: "Setup .bashrc for ec2-user."
+  copy:
+    src:   ../files/.bashrc
+    dest:  /home/ec2-user/
+    owner: ec2-user
+    group: ec2-user
+    mode: "0644"
+
+- name: "Setup .gitconfig for ec2-user."
+  copy:
+    src:   ~/.outside_files/.gitconfig
+    dest:  /home/ec2-user/
+    owner: ec2-user
+    group: ec2-user
+    mode:  "0644"
