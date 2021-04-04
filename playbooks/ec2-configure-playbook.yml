@@ -4,4 +4,4 @@
   become: yes
 
   roles:
-    - { role: ec2-configure, when: ansible_os_family != 'CentOS' }
+    - { role: ec2-configure, when: ansible_os_family == 'RedHat' }
