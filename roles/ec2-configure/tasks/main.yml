@@ -13,6 +13,8 @@
       - git
       - gcc
       - zlib-devel
+      - glibc-devel
+      - glibc-headers
     state: latest
 
 - name: "[shell] Enable amazon-linux-extras packages"
@@ -34,7 +36,16 @@
     name: docker
     state: started
 
-- name: "Setup .bashrc for ec2-user."
+# This is the ARM version, as t4g instances are ARM based
+- name: "[shell] Setup AWS CLI V2, not included by default."
+  shell: |
+    cd /tmp
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
+    unzip awscliv2.zip
+    sudo ./aws/install
+    /usr/local/bin/aws --version
+
+- name: "Setup .bashrc for ec2-user"
   copy:
     src:   ../files/.bashrc
     dest:  /home/ec2-user/
@@ -42,9 +53,25 @@
     group: ec2-user
     mode: "0644"
 
-- name: "Setup .gitconfig for ec2-user."
+- name: "Setup .gitconfig for ec2-user"
   copy:
     src:   ~/.outside_files/.gitconfig
+    dest:  /home/ec2-user/
+    owner: ec2-user
+    group: ec2-user
+    mode:  "0644"
+
+- name: "Setup .ssh/config for ec2-user"
+  copy:
+    src:   ../files/config
+    dest:  /home/ec2-user/.ssh/
+    owner: ec2-user
+    group: ec2-user
+    mode:  "0644"
+
+- name: "Setup .vimrc for ec2-user"
+  copy:
+    src:   ../files/.vimrc
     dest:  /home/ec2-user/
     owner: ec2-user
     group: ec2-user
