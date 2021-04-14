@@ -1,0 +1,6 @@
+#!/bin/bash
+
+DATE=$(date +%Y-%m-%d-docker-volume-backup)
+/usr/bin/tar -czvf ${DATE}.tgz /var/lib/docker/volumes
+/usr/local/bin/aws s3 cp ${DATE}.tgz s3://mudmuseum-backups/
+rm -f ${DATE}.tgz

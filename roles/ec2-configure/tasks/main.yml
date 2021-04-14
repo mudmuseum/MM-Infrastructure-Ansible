@@ -81,3 +81,11 @@
     owner: ec2-user
     group: ec2-user
     mode:  "0644"
+
+- name: "Setup EC2 docker volume backup cronjob"
+  copy:
+    src:   ../files/backup
+    dest:  /etc/cron.daily/
+    owner: root
+    group: root
+    mode:  "0700"
