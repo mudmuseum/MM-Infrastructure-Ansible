@@ -2,8 +2,7 @@
 - name: "Backup /usr/lib/docker/volumes to S3"
   shell: |
     DATE=$(/usr/bin/date +%Y-%m-%d-docker-volume-backup)
-    /usr/bin/cd /var/lib/docker/volumes
-    /usr/bin/tar -czvf ${DATE}.tgz .
+    /usr/bin/tar -czvf ${DATE}.tgz -C /var/lib/docker/volumes .
     /usr/local/bin/aws s3 cp ${DATE}.tgz s3://mudmuseum-backups/
     rm -f ${DATE}.tgz
   when: type == "backup"
@@ -11,10 +10,9 @@
 - name: "Restore /usr/lib/docker/volumes from S3"
   shell: |
     # Make a backup of today's /usr/lib/docker/volumes for rollback
-    /usr/bin/cd /var/lib/docker/volumes
     DATE_TODAY=$(/usr/bin/date +%Y-%m-%d-docker-volume-backup)
     /usr/bin/mkdir /tmp/${DATE_TODAY}
-    /usr/bin/tar -czvf /tmp/${DATE_TODAY}/${DATE_TODAY}.tgz .
+    /usr/bin/tar -czvf /tmp/${DATE_TODAY}/${DATE_TODAY}.tgz -C /var/lib/docker/volumes .
     # Run a restore off the date variable
     DATE={{ date }}-docker-volume-backup
     /usr/bin/mkdir /tmp/_${DATE}
