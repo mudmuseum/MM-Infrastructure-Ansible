@@ -1,0 +1,27 @@
+--- # This role manages manual backup and restore of /usr/lib/docker/volumes
+- name: "Backup /usr/lib/docker/volumes to S3"
+  shell: |
+    DATE=$(/usr/bin/date +%Y-%m-%d-docker-volume-backup)
+    /usr/bin/cd /var/lib/docker/volumes
+    /usr/bin/tar -czvf ${DATE}.tgz .
+    /usr/local/bin/aws s3 cp ${DATE}.tgz s3://mudmuseum-backups/
+    rm -f ${DATE}.tgz
+  when: type == "backup"
+
+- name: "Restore /usr/lib/docker/volumes from S3"
+  shell: |
+    # Make a backup of today's /usr/lib/docker/volumes for rollback
+    /usr/bin/cd /var/lib/docker/volumes
+    DATE_TODAY=$(/usr/bin/date +%Y-%m-%d-docker-volume-backup)
+    /usr/bin/mkdir /tmp/${DATE_TODAY}
+    /usr/bin/tar -czvf /tmp/${DATE_TODAY}/${DATE_TODAY}.tgz .
+    # Run a restore off the date variable
+    DATE={{ date }}-docker-volume-backup
+    /usr/bin/mkdir /tmp/_${DATE}
+    /usr/bin/cd /tmp/_${DATE}
+    /usr/bin/local/aws s3 cp s3://mudmuseum-backups/${DATE} ./
+    /usr/bin/tar -xvf ${DATE}
+    /usr/bin/rm -fr /usr/lib/docker/volumes/*
+    /usr/bin/cp -R ./* /usr/lib/docker/volumes/
+    /usr/bin/rm -fr /tmp/_${DATE}
+  when: type == "restore" and "date" not "default"
