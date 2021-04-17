@@ -1,0 +1,13 @@
+---
+- hosts: all
+  gather_facts: true
+  become: yes
+
+  pre_tasks:
+  - name: "Verify logdna key variable was set"
+    fail:
+      msg: "logdna-key variable is empty."
+    when: logdna_key == ""
+
+  roles:
+    - { role: setup-logdna, when: ansible_os_family == 'RedHat' }
